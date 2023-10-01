@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  COORDINATOR
+  TPS_PR
+}
+
+enum VoterStatus {
+  WILLINGLY
+  NEED_MONEY
+  NOT_GONNA_VOTE
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String        @unique
+  phoneNumber String
+  password    String
+  role        UserRole
+  VotingPlace VotingPlace[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
+
+model Subdistrict {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  Ward Ward[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
+
+model Ward {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique
+  subdistrictId Int
+  subdistrict   Subdistrict   @relation(fields: [subdistrictId], references: [id])
+  VotingPlace   VotingPlace[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
+
+model VotingPlace {
+  id            Int    @id @default(autoincrement())
+  name          String @unique
+  address       String
+  wardId        Int
+  ward          Ward   @relation(fields: [wardId], references: [id])
+  coordinatorId Int
+  coordinator   User   @relation(fields: [coordinatorId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
+
+model Elector {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
