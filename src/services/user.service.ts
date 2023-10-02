@@ -25,7 +25,15 @@ class UserService {
 
   static async getUserById(id: number) {
     try {
-      var user = await DatabaseLib.models.user.findFirst({ where: { id } });
+      var user = await DatabaseLib.models.user.findFirst({
+        where: { id },
+        select: {
+          name: true,
+          email: true,
+          phoneNumber: true,
+          role: true,
+        },
+      });
 
       if (!user) {
         throw "NOT_FOUND" as TErrorMsg;
@@ -37,10 +45,10 @@ class UserService {
     }
   }
 
-  static async getUserByUsername(username: string) {
+  static async getUserByUsername(email: string) {
     try {
       var user = await DatabaseLib.models.user.findFirst({
-        where: { username },
+        where: { email },
       });
 
       if (!user) {

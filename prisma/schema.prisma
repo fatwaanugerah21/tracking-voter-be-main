@@ -13,33 +13,35 @@ datasource db {
 enum UserRole {
   OWNER
   ADMIN
-  COORDINATOR
+  TPS_COORDINATOR
   TPS_PR
 }
 
-enum VoterStatus {
+enum ElectorStatus {
   WILLINGLY
   NEED_MONEY
   NOT_GONNA_VOTE
 }
 
 model User {
-  id          Int           @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
-  email       String        @unique
+  email       String   @unique
   phoneNumber String
   password    String
   role        UserRole
-  VotingPlace VotingPlace[]
+
+  votingPlacePr VPPR[]
+  coordinator   Coordinator[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime?
 }
 
 model Subdistrict {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  Ward Ward[]
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  wards Ward[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime?
@@ -50,27 +52,66 @@ model Ward {
   name          String        @unique
   subdistrictId Int
   subdistrict   Subdistrict   @relation(fields: [subdistrictId], references: [id])
-  VotingPlace   VotingPlace[]
+  votingPlaces  VotingPlace[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
+
+model Coordinator {
+  id           Int           @id @default(autoincrement())
+  userId       Int
+  user         User          @relation(fields: [userId], references: [id])
+  votingPlaces VotingPlace[]
+  vpprs        VPPR[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime?
 }
 
 model VotingPlace {
-  id            Int    @id @default(autoincrement())
-  name          String @unique
+  id            Int         @id @default(autoincrement())
+  name          String      @unique
   address       String
   wardId        Int
-  ward          Ward   @relation(fields: [wardId], references: [id])
+  ward          Ward        @relation(fields: [wardId], references: [id])
   coordinatorId Int
-  coordinator   User   @relation(fields: [coordinatorId], references: [id])
+  coordinator   Coordinator @relation(fields: [coordinatorId], references: [id])
+  electors      Elector[]
+  vpprs         VPPR[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime?
 }
 
 model Elector {
+  id            Int           @id @default(autoincrement())
+  name          String
+  nik           String        @unique
+  address       String
+  description   String
+  phoneNumber   String
+  status        ElectorStatus
+  bribeAmt      Int?
+  choiceName    String?
+  votingPlaceId Int
+  votingPlace   VotingPlace   @relation(fields: [votingPlaceId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
+
+model VPPR {
   id Int @id @default(autoincrement())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  coordinatorId Int
+  coordinator   Coordinator @relation(fields: [coordinatorId], references: [id])
+
+  votingPlaceId Int
+  votingPlace   VotingPlace @relation(fields: [votingPlaceId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime?

@@ -7,15 +7,10 @@ class AuthRoute {
 
   static routes(): Router {
     this.router.post("/login", AuthController.login);
-    this.router.post(
+    this.router.get(
       "/credential",
       AuthMiddleware.mustLogin,
       AuthController.credential
-    );
-    this.router.post(
-      "/logout",
-      AuthMiddleware.mustLogin,
-      AuthController.logout
     );
 
     return this.router;

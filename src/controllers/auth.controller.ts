@@ -3,7 +3,7 @@ import { errorResponse, successResponse } from "../utils/responses.util";
 import UserService from "../services/user.service";
 import { TErrorMsg } from "../constants/error-msgs.constant";
 import { compareSync } from "bcryptjs";
-import JwtLib from "../libs/jwt.lib";
+import JwtLib, { TJwtPayload } from "../libs/jwt.lib";
 import BcryptLib from "../libs/bcrypt.lib";
 
 class AuthController {
@@ -51,7 +51,18 @@ class AuthController {
     }
   }
 
-  static async credential(req: Request, res: Response) {}
+  static async credential(req: Request, res: Response) {
+    try {
+      var accessor: TJwtPayload = req.headers.accessor as any;
+      console.log(accessor);
+
+      const user = await UserService.getUserById(accessor.id);
+      res.json(successResponse(user));
+    } catch (error) {
+      console.error(error);
+      res.json(errorResponse(400, error + ""));
+    }
+  }
   static async logout(req: Request, res: Response) {}
 }
 
