@@ -104,3 +104,4 @@ bun run start
 MIT
 # salt-monitoring-backend-main
 # salt-monitoring-backend-main
+# backend-node-bun-prisma-template

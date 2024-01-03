@@ -10,13 +10,6 @@ import type {
   SocketData,
 } from "./src/types/indexType";
 import UserRoute from "./src/routes/user.route";
-import AuthRoute from "./src/routes/auth.route";
-import SubdistrictRoute from "./src/routes/subdistrict.route";
-import WardRoute from "./src/routes/ward.route";
-import VotingPlaceRoute from "./src/routes/voting-place.route";
-import ElectorRoute from "./src/routes/elector.route";
-import CoordinatorRoute from "./src/routes/coordinator.route";
-import VPPRRoute from "./src/routes/vppr.route";
 
 class App {
   public app: Application;
@@ -60,13 +53,6 @@ class App {
     });
 
     this.app.use("/users", UserRoute.routes());
-    this.app.use("/subdistricts", SubdistrictRoute.routes());
-    this.app.use("/wards", WardRoute.routes());
-    this.app.use("/coordinators", CoordinatorRoute.routes());
-    this.app.use("/voting-places", VotingPlaceRoute.routes());
-    this.app.use("/vpprs", VPPRRoute.routes());
-    this.app.use("/electors", ElectorRoute.routes());
-    this.app.use("/auth", AuthRoute.routes());
 
     // Routes not found
     this.app.use((req: Request, res: Response, next: NextFunction) => {
